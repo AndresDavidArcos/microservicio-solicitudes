@@ -22,6 +22,9 @@ adapters:
   restconsumer:
     url: "http://localhost:8080"
     timeout: 5000
+  jwt:
+    secret: "!49$^LVzHm3tE3$Hz!MQBVuZ%gsNhpdA"
+    expiration-ms: 28800000
 management:
   endpoints:
     web:

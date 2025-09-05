@@ -1,15 +1,21 @@
 package co.com.pragma.api.dto;
 
-import lombok.AllArgsConstructor;
+
+import jakarta.validation.constraints.Min;
+import jakarta.validation.constraints.NotNull;
 import lombok.Data;
-import lombok.NoArgsConstructor;
 
 @Data
-@NoArgsConstructor
-@AllArgsConstructor
 public class SolicitudDTO {
-    private String documentoIdentidadCliente;
+
+    @NotNull(message = "El monto es obligatorio.")
+    @Min(value = 1, message = "El monto debe ser mayor a cero.")
     private Double monto;
+
+    @NotNull(message = "El plazo es obligatorio.")
+    @Min(value = 1, message = "El plazo debe ser de al menos un mes.")
     private Integer plazoEnMeses;
+
+    @NotNull(message = "El tipo de préstamo es obligatorio.")
     private Long tipoPrestamoId;
 }

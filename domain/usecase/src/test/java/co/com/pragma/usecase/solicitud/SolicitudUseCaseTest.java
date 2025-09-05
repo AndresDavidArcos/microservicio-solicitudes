@@ -1,5 +1,7 @@
 package co.com.pragma.usecase.solicitud;
 
+import co.com.pragma.model.exception.BusinessValidationException;
+import co.com.pragma.model.exception.UnauthorizedException;
 import co.com.pragma.model.solicitud.Solicitud;
 import co.com.pragma.model.solicitud.gateways.SolicitudRepository;
 import co.com.pragma.model.tipoprestamo.gateways.TipoPrestamoRepository;
@@ -33,11 +35,12 @@ class SolicitudUseCaseTest {
     private SolicitudUseCase solicitudUseCase;
 
     private Solicitud solicitud;
+    private String documentoAutenticado;
 
     @BeforeEach
     void setUp() {
+        documentoAutenticado = "123456789";
         solicitud = Solicitud.builder()
-                .documentoIdentidadCliente("123456789")
                 .monto(10000000.0)
                 .plazoEnMeses(24)
                 .tipoPrestamoId(1L)
@@ -49,17 +52,17 @@ class SolicitudUseCaseTest {
     void registrarSolicitudExitosa() {
         when(usuarioRepository.existePorDocumento(anyString())).thenReturn(Mono.just(true));
         when(tipoPrestamoRepository.existePorId(anyLong())).thenReturn(Mono.just(true));
-
         when(solicitudRepository.guardar(any(Solicitud.class))).thenAnswer(invocation -> {
             Solicitud s = invocation.getArgument(0);
             s.setEstado("Pendiente de revisión");
             return Mono.just(s);
         });
 
-        Mono<Solicitud> resultado = solicitudUseCase.registrarSolicitud(solicitud);
+        Mono<Solicitud> resultado = solicitudUseCase.registrarSolicitud(solicitud, documentoAutenticado);
 
         StepVerifier.create(resultado)
-                .expectNextMatches(s -> s.getEstado().equals("Pendiente de revisión"))
+                .expectNextMatches(s -> s.getEstado().equals("Pendiente de revisión")
+                        && s.getDocumentoIdentidadCliente().equals(documentoAutenticado))
                 .verifyComplete();
     }
 
@@ -68,10 +71,10 @@ class SolicitudUseCaseTest {
     void registrarSolicitudFalloUsuarioNoExiste() {
         when(usuarioRepository.existePorDocumento(anyString())).thenReturn(Mono.just(false));
 
-        Mono<Solicitud> resultado = solicitudUseCase.registrarSolicitud(solicitud);
+        Mono<Solicitud> resultado = solicitudUseCase.registrarSolicitud(solicitud, documentoAutenticado);
 
         StepVerifier.create(resultado)
-                .expectError(IllegalArgumentException.class)
+                .expectError(UnauthorizedException.class)
                 .verify();
     }
 
@@ -81,22 +84,10 @@ class SolicitudUseCaseTest {
         when(usuarioRepository.existePorDocumento(anyString())).thenReturn(Mono.just(true));
         when(tipoPrestamoRepository.existePorId(anyLong())).thenReturn(Mono.just(false));
 
-        Mono<Solicitud> resultado = solicitudUseCase.registrarSolicitud(solicitud);
+        Mono<Solicitud> resultado = solicitudUseCase.registrarSolicitud(solicitud, documentoAutenticado);
 
         StepVerifier.create(resultado)
-                .expectError(IllegalArgumentException.class)
-                .verify();
-    }
-
-    @Test
-    @DisplayName("Prueba de fallo por monto cero")
-    void registrarSolicitudFalloDatosInvalidos() {
-        solicitud.setMonto(0.0);
-
-        Mono<Solicitud> resultado = solicitudUseCase.registrarSolicitud(solicitud);
-
-        StepVerifier.create(resultado)
-                .expectError(IllegalArgumentException.class)
+                .expectError(BusinessValidationException.class)
                 .verify();
     }
 }
