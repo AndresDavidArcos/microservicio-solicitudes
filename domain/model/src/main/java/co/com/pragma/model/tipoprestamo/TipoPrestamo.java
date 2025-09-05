@@ -15,4 +15,5 @@ import lombok.*;
 public class TipoPrestamo {
     private Long id;
     private String nombre;
+    private Double tasaInteres;
 }
