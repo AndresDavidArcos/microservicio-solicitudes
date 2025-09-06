@@ -18,10 +18,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 import reactor.core.publisher.Flux;
 import reactor.core.publisher.Mono;
 import reactor.test.StepVerifier;
-
 import java.util.Collections;
 import java.util.List;
-
 import static org.mockito.ArgumentMatchers.*;
 import static org.mockito.Mockito.when;
 
@@ -78,11 +76,11 @@ class ListarSolicitudesUseCaseTest {
         Solicitud solicitudAprobada2 = Solicitud.builder().monto(30000.0).plazoEnMeses(10).build();
 
         when(solicitudRepository.findAllPaginatedAndFiltered(anyList(), anyInt(), anyInt())).thenReturn(Mono.just(paginaSolicitudes));
-        when(usuarioRepository.buscarPorDocumento(anyString(), anyString())).thenReturn(Mono.just(user));
+        when(usuarioRepository.buscarPorDocumento(anyString())).thenReturn(Mono.just(user));
         when(tipoPrestamoRepository.findById(anyLong())).thenReturn(Mono.just(tipoPrestamo));
         when(solicitudRepository.findAprobadasPorCliente(anyString())).thenReturn(Flux.just(solicitudAprobada1, solicitudAprobada2));
 
-        Mono<Page<SolicitudDetallada>> resultado = listarSolicitudesUseCase.ejecutar("token", 0, 10, Collections.emptyList());
+        Mono<Page<SolicitudDetallada>> resultado = listarSolicitudesUseCase.ejecutar(0, 10, Collections.emptyList());
 
         StepVerifier.create(resultado)
                 .expectNextMatches(page -> {
@@ -96,3 +94,4 @@ class ListarSolicitudesUseCaseTest {
                 .verifyComplete();
     }
 }
+
