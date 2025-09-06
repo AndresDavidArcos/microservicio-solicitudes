@@ -52,7 +52,7 @@ public class Handler {
         int size = serverRequest.queryParam("size").map(Integer::parseInt).orElse(10);
         List<String> estados = serverRequest.queryParams().get("estado");
 
-        return listarSolicitudesUseCase.ejecutar(token, page, size, estados)
+        return listarSolicitudesUseCase.ejecutar(page, size, estados)
                 .map(solicitudDTOMapper::toPageDTO)
                 .flatMap(pageDTO -> ServerResponse.ok()
                         .contentType(MediaType.APPLICATION_JSON)

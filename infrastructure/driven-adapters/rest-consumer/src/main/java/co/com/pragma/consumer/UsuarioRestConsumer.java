@@ -4,6 +4,7 @@ import co.com.pragma.model.usuario.gateways.UsuarioRepository;
 import co.com.pragma.model.usuario.User;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.reactive.function.client.WebClient;
@@ -31,12 +32,16 @@ public class UsuarioRestConsumer implements UsuarioRepository {
 
     @Override
     @CircuitBreaker(name = "buscarUsuario", fallbackMethod = "fallbackBuscarUsuario")
-    public Mono<User> buscarPorDocumento(String documentoIdentidad, String token) {
-        return client.get()
-                .uri("/api/v1/usuarios/{documento}", documentoIdentidad)
-                .header(HttpHeaders.AUTHORIZATION, token)
-                .retrieve()
-                .bodyToMono(User.class);
+    public Mono<User> buscarPorDocumento(String documentoIdentidad) {
+        return ReactiveSecurityContextHolder.getContext()
+                .map(context -> context.getAuthentication().getCredentials().toString())
+                .flatMap(token ->
+                        client.get()
+                                .uri("/api/v1/usuarios/{documento}", documentoIdentidad)
+                                .header(HttpHeaders.AUTHORIZATION, "Bearer " + token)
+                                .retrieve()
+                                .bodyToMono(User.class)
+                );
     }
 
     public Mono<User> fallbackBuscarUsuario(String documento, String token, Throwable ex) {

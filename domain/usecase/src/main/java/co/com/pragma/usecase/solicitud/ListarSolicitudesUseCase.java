@@ -21,7 +21,7 @@ public class ListarSolicitudesUseCase {
     private final UsuarioRepository usuarioRepository;
     private final TipoPrestamoRepository tipoPrestamoRepository;
 
-    public Mono<Page<SolicitudDetallada>> ejecutar(String token, int page, int size, List<String> estados) {
+    public Mono<Page<SolicitudDetallada>> ejecutar(int page, int size, List<String> estados) {
         List<String> estadosAFiltrar = (estados == null || estados.isEmpty())
                 ? List.of("Pendiente de revisión", "Rechazada", "Revision manual")
                 : estados;
@@ -29,7 +29,7 @@ public class ListarSolicitudesUseCase {
         return solicitudRepository.findAllPaginatedAndFiltered(estadosAFiltrar, page, size)
                 .flatMap(paginaSolicitudes -> {
                     Flux<SolicitudDetallada> contenidoEnriquecido = Flux.fromIterable(paginaSolicitudes.getContent())
-                            .flatMap(solicitud -> enriquecerSolicitud(solicitud, token));
+                            .flatMap(solicitud -> enriquecerSolicitud(solicitud));
 
                     return contenidoEnriquecido.collectList()
                             .map(list -> Page.<SolicitudDetallada>builder()
@@ -41,8 +41,8 @@ public class ListarSolicitudesUseCase {
                 });
     }
 
-    private Mono<SolicitudDetallada> enriquecerSolicitud(Solicitud solicitud, String token) {
-        Mono<User> usuarioMono = usuarioRepository.buscarPorDocumento(solicitud.getDocumentoIdentidadCliente(), token)
+    private Mono<SolicitudDetallada> enriquecerSolicitud(Solicitud solicitud) {
+        Mono<User> usuarioMono = usuarioRepository.buscarPorDocumento(solicitud.getDocumentoIdentidadCliente())
                 .defaultIfEmpty(new User());
 
         Mono<TipoPrestamo> tipoPrestamoMono = tipoPrestamoRepository.findById(solicitud.getTipoPrestamoId())

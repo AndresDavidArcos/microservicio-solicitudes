@@ -37,7 +37,7 @@ public class JwtAuthenticationFilter implements WebFilter {
 
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                     documento,
-                    null,
+                    token,
                     List.of(new SimpleGrantedAuthority("ROLE_" + role))
             );
 
