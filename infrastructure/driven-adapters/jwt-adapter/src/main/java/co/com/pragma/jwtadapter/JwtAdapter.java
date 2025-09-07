@@ -9,9 +9,14 @@ import java.util.Date;
 
 @Component
 public class JwtAdapter {
+    private final String jwtSecret;
+    private final long jwtExpirationMs;
 
-    @Value("${adapters.jwt.secret}")
-    private String jwtSecret;
+    public JwtAdapter(@Value("${adapters.jwt.secret}") String jwtSecret,
+                      @Value("${adapters.jwt.expiration-ms}") long jwtExpirationMs) {
+        this.jwtSecret = jwtSecret;
+        this.jwtExpirationMs = jwtExpirationMs;
+    }
 
     private Claims getAllClaimsFromToken(String token) {
         return Jwts.parserBuilder()
