@@ -1,0 +1,18 @@
+INSERT INTO solicitudes (documento_identidad_cliente, monto, plazo_en_meses, estado, tipo_prestamo_id) VALUES
+('1122334455', 15000000, 36, 'Pendiente de revisión', 1),
+('200', 5000000, 24, 'Rechazada', 2),
+('1122334455', 20000000, 48, 'Revision manual', 3),
+('200', 8000000, 12, 'Aprobada', 4),
+('1122334455', 1000000, 6, 'Rechazada', 1),
+('200', 12000000, 60, 'Pendiente de revisión', 1),
+('1122334455', 7500000, 24, 'Pendiente de revisión', 2),
+('200', 3000000, 12, 'Rechazada', 3),
+('1122334455', 25000000, 72, 'Revision manual', 1),
+('200', 900000, 6, 'Pendiente de revisión', 4),
+('1122334455', 6000000, 36, 'Rechazada', 2),
+('200', 18000000, 48, 'Pendiente de revisión', 1),
+('1122334455', 4000000, 12, 'Aprobada', 3),
+('200', 2200000, 24, 'Revision manual', 2),
+('1122334455', 13000000, 60, 'Pendiente de revisión', 4),
+('200', 6000000, 24, 'Aprobada', 1),
+('1122334455', 3000000, 6, 'Aprobada', 2);
