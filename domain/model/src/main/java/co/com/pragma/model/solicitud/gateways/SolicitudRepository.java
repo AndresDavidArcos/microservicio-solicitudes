@@ -11,4 +11,5 @@ public interface SolicitudRepository {
     Mono<Solicitud> guardar(Solicitud solicitud);
     Mono<Page<Solicitud>> findAllPaginatedAndFiltered(List<String> estados, int page, int size);
     Flux<Solicitud> findAprobadasPorCliente(String documentoIdentidadCliente);
+    Mono<Solicitud> findById(Long idSolicitud);
 }

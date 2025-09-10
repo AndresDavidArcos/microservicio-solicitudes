@@ -44,7 +44,7 @@ public class UsuarioRestConsumer implements UsuarioRepository {
                 );
     }
 
-    public Mono<User> fallbackBuscarUsuario(String documento, String token, Throwable ex) {
+    public Mono<User> fallbackBuscarUsuario(String documentoIdentidad, Throwable ex) {
         return Mono.just(new User());
     }
 }
