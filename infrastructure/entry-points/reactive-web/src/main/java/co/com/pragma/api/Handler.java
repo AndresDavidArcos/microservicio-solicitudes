@@ -1,10 +1,12 @@
 package co.com.pragma.api;
 
+import co.com.pragma.api.dto.ActualizarEstadoDTO;
 import co.com.pragma.api.dto.SolicitudDTO;
 import co.com.pragma.api.dto.SolicitudDetalladaDTO;
 import co.com.pragma.api.mapper.SolicitudDTOMapper;
 import co.com.pragma.api.validation.ValidatorHandler;
 import co.com.pragma.model.solicitud.Solicitud;
+import co.com.pragma.usecase.solicitud.ActualizarEstadoUseCase;
 import co.com.pragma.usecase.solicitud.ListarSolicitudesUseCase;
 import co.com.pragma.usecase.solicitud.SolicitudUseCase;
 import lombok.RequiredArgsConstructor;
@@ -26,6 +28,7 @@ import java.util.List;
 public class Handler {
     private final SolicitudUseCase solicitudUseCase;
     private final ListarSolicitudesUseCase listarSolicitudesUseCase;
+    private final ActualizarEstadoUseCase actualizarEstadoUseCase;
     private final SolicitudDTOMapper solicitudDTOMapper;
     private final ValidatorHandler validatorHandler;
 
@@ -57,5 +60,16 @@ public class Handler {
                 .flatMap(pageDTO -> ServerResponse.ok()
                         .contentType(MediaType.APPLICATION_JSON)
                         .bodyValue(pageDTO));
+    }
+
+    public Mono<ServerResponse> actualizarEstado(ServerRequest serverRequest) {
+        Long id = Long.valueOf(serverRequest.pathVariable("id"));
+
+        return serverRequest.bodyToMono(ActualizarEstadoDTO.class)
+                .flatMap(validatorHandler::validate)
+                .flatMap(dto -> actualizarEstadoUseCase.ejecutar(id, dto.getEstado()))
+                .flatMap(solicitudActualizada -> ServerResponse.ok()
+                        .contentType(MediaType.APPLICATION_JSON)
+                        .bodyValue(solicitudActualizada));
     }
 }

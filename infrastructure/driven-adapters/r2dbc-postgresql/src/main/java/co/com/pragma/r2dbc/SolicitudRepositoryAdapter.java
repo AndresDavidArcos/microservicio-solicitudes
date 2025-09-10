@@ -53,4 +53,9 @@ public class SolicitudRepositoryAdapter extends ReactiveAdapterOperations<Solici
                 .map(this::toEntity);
     }
 
+    @Override
+    public Mono<Solicitud> findById(Long idSolicitud) {
+        return super.findById(idSolicitud);
+    }
+
 }

@@ -18,4 +18,6 @@ public interface SolicitudReactiveRepository extends ReactiveCrudRepository<Soli
     Flux<SolicitudEntity> findByEstadoIn(List<String> estados, int size, long offset);
 
     Flux<SolicitudEntity> findByDocumentoIdentidadClienteAndEstado(String documentoIdentidadCliente, String estado);
+
+
 }
