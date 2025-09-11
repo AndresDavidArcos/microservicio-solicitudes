@@ -8,7 +8,7 @@ import lombok.*;
 @AllArgsConstructor
 @Builder(toBuilder = true)
 public class Solicitud {
-    private String id;
+    private Long id;
     private String documentoIdentidadCliente;
     private Double monto;
     private Integer plazoEnMeses;
