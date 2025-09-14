@@ -3,13 +3,14 @@ package co.com.pragma.consumer;
 import co.com.pragma.model.usuario.gateways.UsuarioRepository;
 import co.com.pragma.model.usuario.User;
 import io.github.resilience4j.circuitbreaker.annotation.CircuitBreaker;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.security.core.context.ReactiveSecurityContextHolder;
 import org.springframework.http.HttpHeaders;
 import org.springframework.stereotype.Repository;
 import org.springframework.web.reactive.function.client.WebClient;
 import reactor.core.publisher.Mono;
-
+@Slf4j
 @Repository
 public class UsuarioRestConsumer implements UsuarioRepository {
 
@@ -45,6 +46,11 @@ public class UsuarioRestConsumer implements UsuarioRepository {
     }
 
     public Mono<User> fallbackBuscarUsuario(String documentoIdentidad, Throwable ex) {
+        log.error(
+                "Fallback activado para 'buscarPorDocumento' con documento: '{}'. Causa: {}",
+                documentoIdentidad,
+                ex.toString()
+        );
         return Mono.just(new User());
     }
 }
