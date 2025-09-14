@@ -25,8 +25,9 @@ adapters:
     secret: "${JWT_SECRET}"
     expiration-ms: 28800000
   sqs:
-    region: "${AWS_REGION:us-east-1}"
-    queueUrl: "${SQS_QUEUE_URL}"
+    region: "${AWS_REGION:us-east-2}"
+    queueUrlNotificaciones: "${SQS_QUEUE_URL_NOTIFICACIONES}"
+    queueUrlValidacion: "${SQS_QUEUE_URL_VALIDACION}"
 management:
   endpoints:
     web:
@@ -58,3 +59,11 @@ adapter:
     region: "us-east-1"
     queueUrl: "http://localhost:4566/000000000000/sample"
     endpoint: "http://localhost:4566 # For localstack only"
+entrypoint:
+  sqs:
+    region: "${AWS_REGION:us-east-2}"
+    queueUrlDecision: "${SQS_QUEUE_URL_DECISION}"
+    waitTimeSeconds: 20
+    maxNumberOfMessages: 10
+    visibilityTimeoutSeconds: 10
+    numberOfThreads: 1

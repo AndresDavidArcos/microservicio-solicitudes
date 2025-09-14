@@ -12,4 +12,6 @@ public class TipoPrestamoEntity {
     private String nombre;
     @Column("tasa_interes")
     private Double tasaInteres;
+    @Column("validacion_automatica")
+    private Boolean validacionAutomatica;
 }

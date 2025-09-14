@@ -16,4 +16,5 @@ public class TipoPrestamo {
     private Long id;
     private String nombre;
     private Double tasaInteres;
+    private Boolean validacionAutomatica;
 }

@@ -1,7 +1,8 @@
 package co.com.pragma.sqs.sender;
 
-import co.com.pragma.model.solicitud.Notificacion;
-import co.com.pragma.model.solicitud.gateways.NotificacionGateway;
+import co.com.pragma.model.solicitud.ValidacionPayload;
+import co.com.pragma.model.solicitud.gateways.ValidacionAutomaticaGateway;
+import co.com.pragma.sqs.sender.config.SQSSenderProperties;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import lombok.RequiredArgsConstructor;
 import lombok.SneakyThrows;
@@ -10,12 +11,11 @@ import org.springframework.stereotype.Repository;
 import reactor.core.publisher.Mono;
 import software.amazon.awssdk.services.sqs.SqsAsyncClient;
 import software.amazon.awssdk.services.sqs.model.SendMessageRequest;
-import co.com.pragma.sqs.sender.config.SQSSenderProperties;
 
 @Slf4j
 @Repository
 @RequiredArgsConstructor
-public class SQSNotificacionAdapter implements NotificacionGateway {
+public class SQSValidacionAdapter implements ValidacionAutomaticaGateway {
 
     private final SQSSenderProperties properties;
     private final SqsAsyncClient client;
@@ -23,17 +23,17 @@ public class SQSNotificacionAdapter implements NotificacionGateway {
 
     @Override
     @SneakyThrows
-    public Mono<Void> enviarNotificacion(Notificacion notificacion) {
-        String mensajeJson = mapper.writeValueAsString(notificacion);
+    public Mono<Void> encolarParaValidacion(ValidacionPayload payload) {
+        String mensajeJson = mapper.writeValueAsString(payload);
 
         SendMessageRequest request = SendMessageRequest.builder()
-                .queueUrl(properties.queueUrlNotificaciones())
+                .queueUrl(properties.queueUrlValidacion())
                 .messageBody(mensajeJson)
                 .build();
 
         return Mono.fromFuture(client.sendMessage(request))
-                .doOnSuccess(response -> log.info("Mensaje enviado a SQS con ID: {}", response.messageId()))
-                .doOnError(err -> log.error("Error al enviar mensaje a SQS", err))
+                .doOnSuccess(response -> log.info("Solicitud {} encolada para validación automática.", payload.getSolicitudActual().getId()))
+                .doOnError(err -> log.error("Error al encolar para validación.", err))
                 .then();
     }
 }
