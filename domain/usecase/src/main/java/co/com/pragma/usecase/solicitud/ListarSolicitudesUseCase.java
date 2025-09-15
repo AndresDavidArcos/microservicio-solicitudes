@@ -59,6 +59,7 @@ public class ListarSolicitudesUseCase {
                     Double deudaTotal = tuple.getT3();
 
                     return SolicitudDetallada.builder()
+                            .id(solicitud.getId())
                             .monto(solicitud.getMonto())
                             .plazoEnMeses(solicitud.getPlazoEnMeses())
                             .estado(solicitud.getEstado())

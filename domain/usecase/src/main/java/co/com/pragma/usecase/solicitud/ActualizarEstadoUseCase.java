@@ -3,6 +3,7 @@ package co.com.pragma.usecase.solicitud;
 import co.com.pragma.model.exception.BusinessValidationException;
 import co.com.pragma.model.solicitud.Notificacion;
 import co.com.pragma.model.solicitud.Solicitud;
+import co.com.pragma.model.solicitud.gateways.AprobacionGateway;
 import co.com.pragma.model.solicitud.gateways.NotificacionGateway;
 import co.com.pragma.model.solicitud.gateways.SolicitudRepository;
 import co.com.pragma.model.usuario.User;
@@ -17,6 +18,8 @@ public class ActualizarEstadoUseCase {
     private final SolicitudRepository solicitudRepository;
     private final NotificacionGateway notificacionGateway;
     private final UsuarioRepository usuarioRepository;
+    private final AprobacionGateway aprobacionGateway;
+
     public Mono<Solicitud> ejecutar(Long idSolicitud, String nuevoEstado) {
         if (!List.of("Aprobada", "Rechazada").contains(nuevoEstado)) {
             return Mono.error(new BusinessValidationException("El estado proporcionado no es válido."));
@@ -37,7 +40,14 @@ public class ActualizarEstadoUseCase {
                                         .correoDestinatario(user.getCorreoElectronico())
                                         .build();
 
-                                return notificacionGateway.enviarNotificacion(notificacion)
+                                Mono<Void> notificacionClienteMono = notificacionGateway.enviarNotificacion(notificacion);
+
+                                Mono<Void> notificacionReporteMono = Mono.empty();
+                                if ("Aprobada".equals(solicitudGuardada.getEstado())) {
+                                    notificacionReporteMono = aprobacionGateway.notificarAprobacion(solicitudGuardada);
+                                }
+
+                                return Mono.when(notificacionClienteMono, notificacionReporteMono)
                                         .thenReturn(solicitudGuardada);
                             });
                 });

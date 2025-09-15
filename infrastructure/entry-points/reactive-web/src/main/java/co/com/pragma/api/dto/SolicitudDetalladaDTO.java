@@ -6,6 +6,7 @@ import lombok.Data;
 @Data
 @Builder(toBuilder = true)
 public class SolicitudDetalladaDTO {
+    private Long id;
     private Double monto;
     private Integer plazoEnMeses;
     private String estado;

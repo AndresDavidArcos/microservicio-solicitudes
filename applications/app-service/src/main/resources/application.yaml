@@ -28,6 +28,7 @@ adapters:
     region: "${AWS_REGION:us-east-2}"
     queueUrlNotificaciones: "${SQS_QUEUE_URL_NOTIFICACIONES}"
     queueUrlValidacion: "${SQS_QUEUE_URL_VALIDACION}"
+    queueUrlAprobaciones: "${SQS_QUEUE_URL_APROBACIONES}"
 management:
   endpoints:
     web:
