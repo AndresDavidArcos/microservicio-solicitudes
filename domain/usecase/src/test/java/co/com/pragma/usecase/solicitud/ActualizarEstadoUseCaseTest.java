@@ -3,6 +3,7 @@ package co.com.pragma.usecase.solicitud;
 import co.com.pragma.model.exception.BusinessValidationException;
 import co.com.pragma.model.solicitud.Notificacion;
 import co.com.pragma.model.solicitud.Solicitud;
+import co.com.pragma.model.solicitud.gateways.AprobacionGateway;
 import co.com.pragma.model.solicitud.gateways.NotificacionGateway;
 import co.com.pragma.model.solicitud.gateways.SolicitudRepository;
 import co.com.pragma.model.usuario.User;
@@ -29,6 +30,8 @@ class ActualizarEstadoUseCaseTest {
     private NotificacionGateway notificacionGateway;
     @Mock
     private UsuarioRepository usuarioRepository;
+    @Mock
+    private AprobacionGateway aprobacionGateway;
 
     @InjectMocks
     private ActualizarEstadoUseCase actualizarEstadoUseCase;
@@ -58,6 +61,7 @@ class ActualizarEstadoUseCaseTest {
         when(usuarioRepository.buscarPorDocumento(anyString())).thenReturn(Mono.just(usuarioExistente));
         when(solicitudRepository.guardar(any(Solicitud.class))).thenAnswer(invocation -> Mono.just(invocation.getArgument(0)));
         when(notificacionGateway.enviarNotificacion(any(Notificacion.class))).thenReturn(Mono.empty());
+        when(aprobacionGateway.notificarAprobacion(any(Solicitud.class))).thenReturn(Mono.empty());
 
         Mono<Solicitud> resultado = actualizarEstadoUseCase.ejecutar(1L, nuevoEstado);
 

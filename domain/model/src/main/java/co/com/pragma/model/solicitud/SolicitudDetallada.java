@@ -8,6 +8,7 @@ import java.time.LocalDate;
 @Data
 @Builder(toBuilder = true)
 public class SolicitudDetallada {
+    private Long id;
     private Double monto;
     private Integer plazoEnMeses;
     private String estado;
