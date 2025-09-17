@@ -3,6 +3,7 @@ package co.com.pragma.usecase.solicitud;
 import co.com.pragma.model.exception.BusinessValidationException;
 import co.com.pragma.model.solicitud.Notificacion;
 import co.com.pragma.model.solicitud.Solicitud;
+import co.com.pragma.model.solicitud.enums.EstadoSolicitud;
 import co.com.pragma.model.solicitud.gateways.AprobacionGateway;
 import co.com.pragma.model.solicitud.gateways.NotificacionGateway;
 import co.com.pragma.model.solicitud.gateways.SolicitudRepository;
@@ -21,7 +22,7 @@ public class ActualizarEstadoUseCase {
     private final AprobacionGateway aprobacionGateway;
 
     public Mono<Solicitud> ejecutar(Long idSolicitud, String nuevoEstado) {
-        if (!List.of("Aprobada", "Rechazada").contains(nuevoEstado)) {
+        if (!List.of(EstadoSolicitud.APROBADA.toString(), EstadoSolicitud.RECHAZADA.toString()).contains(nuevoEstado)) {
             return Mono.error(new BusinessValidationException("El estado proporcionado no es válido."));
         }
 
@@ -43,7 +44,7 @@ public class ActualizarEstadoUseCase {
                                 Mono<Void> notificacionClienteMono = notificacionGateway.enviarNotificacion(notificacion);
 
                                 Mono<Void> notificacionReporteMono = Mono.empty();
-                                if ("Aprobada".equals(solicitudGuardada.getEstado())) {
+                                if (EstadoSolicitud.APROBADA.toString().equals(solicitudGuardada.getEstado())) {
                                     notificacionReporteMono = aprobacionGateway.notificarAprobacion(solicitudGuardada);
                                 }
 

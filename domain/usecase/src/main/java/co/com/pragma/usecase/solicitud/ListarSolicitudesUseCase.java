@@ -3,6 +3,7 @@ package co.com.pragma.usecase.solicitud;
 import co.com.pragma.model.page.Page;
 import co.com.pragma.model.solicitud.Solicitud;
 import co.com.pragma.model.solicitud.SolicitudDetallada;
+import co.com.pragma.model.solicitud.enums.EstadoSolicitud;
 import co.com.pragma.model.solicitud.gateways.SolicitudRepository;
 import co.com.pragma.model.tipoprestamo.TipoPrestamo;
 import co.com.pragma.model.tipoprestamo.gateways.TipoPrestamoRepository;
@@ -23,7 +24,7 @@ public class ListarSolicitudesUseCase {
 
     public Mono<Page<SolicitudDetallada>> ejecutar(int page, int size, List<String> estados) {
         List<String> estadosAFiltrar = (estados == null || estados.isEmpty())
-                ? List.of("Pendiente de revisión", "Rechazada", "Revision manual")
+                ? EstadoSolicitud.estadosParaAsesor()
                 : estados;
 
         return solicitudRepository.findAllPaginatedAndFiltered(estadosAFiltrar, page, size)
