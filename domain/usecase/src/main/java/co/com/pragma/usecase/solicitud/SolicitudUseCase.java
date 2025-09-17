@@ -5,6 +5,7 @@ import co.com.pragma.model.exception.UnauthorizedException;
 import co.com.pragma.model.solicitud.PrestamoAprobadoInfo;
 import co.com.pragma.model.solicitud.Solicitud;
 import co.com.pragma.model.solicitud.ValidacionPayload;
+import co.com.pragma.model.solicitud.enums.EstadoSolicitud;
 import co.com.pragma.model.solicitud.gateways.ValidacionAutomaticaGateway;
 import co.com.pragma.model.solicitud.gateways.SolicitudRepository;
 import co.com.pragma.model.tipoprestamo.TipoPrestamo;
@@ -37,11 +38,11 @@ public class SolicitudUseCase {
                             .switchIfEmpty(Mono.error(new BusinessValidationException("El tipo de préstamo seleccionado no es válido.")))
                             .flatMap(tipoPrestamo -> {
                                 if (Boolean.TRUE.equals(tipoPrestamo.getValidacionAutomatica())) {
-                                    solicitud.setEstado("En validación automática");
+                                    solicitud.setEstado(EstadoSolicitud.EN_VALIDACION_AUTOMATICA.toString());
                                     return solicitudRepository.guardar(solicitud)
                                             .flatMap(solicitudGuardada -> enriquecerYEncolar(solicitudGuardada, tipoPrestamo));
                                 } else {
-                                    solicitud.setEstado("Pendiente de revisión");
+                                    solicitud.setEstado(EstadoSolicitud.PENDIENTE_DE_REVISION.toString());
                                     return solicitudRepository.guardar(solicitud);
                                 }
                             });
