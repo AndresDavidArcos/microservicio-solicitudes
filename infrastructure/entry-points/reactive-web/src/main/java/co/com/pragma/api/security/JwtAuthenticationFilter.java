@@ -1,6 +1,5 @@
 package co.com.pragma.api.security;
 
-import co.com.pragma.jwtadapter.JwtAdapter;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.HttpHeaders;
 import org.springframework.security.authentication.UsernamePasswordAuthenticationToken;
@@ -18,7 +17,7 @@ import java.util.List;
 @RequiredArgsConstructor
 public class JwtAuthenticationFilter implements WebFilter {
 
-    private final JwtAdapter jwtAdapter;
+    private final JwtUtil jwt;
 
     @Override
     public Mono<Void> filter(ServerWebExchange exchange, WebFilterChain chain) {
@@ -30,10 +29,9 @@ public class JwtAuthenticationFilter implements WebFilter {
 
         String token = authHeader.substring(7);
 
-        if (jwtAdapter.validateToken(token)) {
-            String username = jwtAdapter.getUsernameFromToken(token);
-            String role = jwtAdapter.getRoleFromToken(token);
-            String documento = jwtAdapter.getDocumentoFromToken(token);
+        if (jwt.validateToken(token)) {
+            String role = jwt.getRoleFromToken(token);
+            String documento = jwt.getDocumentoFromToken(token);
 
             UsernamePasswordAuthenticationToken authentication = new UsernamePasswordAuthenticationToken(
                     documento,

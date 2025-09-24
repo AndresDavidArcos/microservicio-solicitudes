@@ -4,7 +4,7 @@ spring:
   application:
     name: "SolicitudesService"
   flyway:
-    enabled: true
+    enabled: false
     url: "jdbc:postgresql://${DB_HOST}:${DB_PORT}/${DB_SOLICITUDES_NAME}"
     user: "${DB_USER}"
     password: "${DB_PASSWORD}"
@@ -42,7 +42,7 @@ management:
     circuitbreakers:
       enabled: true
 cors:
-  allowed-origins: "http://localhost:4200,http://localhost:8080"
+  allowed-origins: "*"
 resilience4j:
   circuitbreaker:
     instances:
@@ -55,11 +55,6 @@ resilience4j:
         slidingWindowSize: 10
         minimumNumberOfCalls: 10
         waitDurationInOpenState: "10s"
-adapter:
-  sqs:
-    region: "us-east-1"
-    queueUrl: "http://localhost:4566/000000000000/sample"
-    endpoint: "http://localhost:4566 # For localstack only"
 entrypoint:
   sqs:
     region: "${AWS_REGION:us-east-2}"
@@ -68,3 +63,6 @@ entrypoint:
     maxNumberOfMessages: 10
     visibilityTimeoutSeconds: 10
     numberOfThreads: 1
+aws:
+  region: "${AWS_REGION:us-east-2}"
+  secretName: "crediya"

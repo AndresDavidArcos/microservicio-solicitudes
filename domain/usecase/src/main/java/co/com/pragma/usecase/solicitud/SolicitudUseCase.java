@@ -20,6 +20,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class SolicitudUseCase {
 
+    private static final String ERROR_CLIENTE_NO_REGISTRADO = "El cliente no se encuentra registrado.";
+    private static final String ERROR_TIPO_PRESTAMO_INVALIDO = "El tipo de préstamo seleccionado no es válido.";
+
     private final SolicitudRepository solicitudRepository;
     private final TipoPrestamoRepository tipoPrestamoRepository;
     private final ValidacionAutomaticaGateway validacionAutomaticaGateway;
@@ -32,10 +35,10 @@ public class SolicitudUseCase {
         return usuarioRepository.existePorDocumento(solicitud.getDocumentoIdentidadCliente())
                 .flatMap(existeUsuario -> {
                     if (Boolean.FALSE.equals(existeUsuario)) {
-                        return Mono.error(new UnauthorizedException("El cliente no se encuentra registrado."));
+                        return Mono.error(new UnauthorizedException(ERROR_CLIENTE_NO_REGISTRADO));
                     }
                     return tipoPrestamoRepository.findById(solicitud.getTipoPrestamoId())
-                            .switchIfEmpty(Mono.error(new BusinessValidationException("El tipo de préstamo seleccionado no es válido.")))
+                            .switchIfEmpty(Mono.error(new BusinessValidationException(ERROR_TIPO_PRESTAMO_INVALIDO)))
                             .flatMap(tipoPrestamo -> {
                                 if (Boolean.TRUE.equals(tipoPrestamo.getValidacionAutomatica())) {
                                     solicitud.setEstado(EstadoSolicitud.EN_VALIDACION_AUTOMATICA.toString());

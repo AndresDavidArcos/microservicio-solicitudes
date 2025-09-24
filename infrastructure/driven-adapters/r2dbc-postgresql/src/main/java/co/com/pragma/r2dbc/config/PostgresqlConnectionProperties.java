@@ -1,3 +1,4 @@
+/*
 package co.com.pragma.r2dbc.config;
 
 import org.springframework.boot.context.properties.ConfigurationProperties;
@@ -11,3 +12,4 @@ public record PostgresqlConnectionProperties(
         String username,
         String password) {
 }
+*/
