@@ -16,6 +16,9 @@ import java.util.List;
 @RequiredArgsConstructor
 public class ActualizarEstadoUseCase {
 
+    private static final String ERROR_ESTADO_INVALIDO = "El estado proporcionado no es válido.";
+    private static final String ERROR_SOLICITUD_NO_ENCONTRADA = "La solicitud no fue encontrada.";
+
     private final SolicitudRepository solicitudRepository;
     private final NotificacionGateway notificacionGateway;
     private final UsuarioRepository usuarioRepository;
@@ -23,11 +26,11 @@ public class ActualizarEstadoUseCase {
 
     public Mono<Solicitud> ejecutar(Long idSolicitud, String nuevoEstado) {
         if (!List.of(EstadoSolicitud.APROBADA.toString(), EstadoSolicitud.RECHAZADA.toString()).contains(nuevoEstado)) {
-            return Mono.error(new BusinessValidationException("El estado proporcionado no es válido."));
+            return Mono.error(new BusinessValidationException(ERROR_ESTADO_INVALIDO));
         }
 
         return solicitudRepository.findById(idSolicitud)
-                .switchIfEmpty(Mono.error(new BusinessValidationException("La solicitud no fue encontrada.")))
+                .switchIfEmpty(Mono.error(new BusinessValidationException(ERROR_SOLICITUD_NO_ENCONTRADA)))
                 .flatMap(solicitud -> Mono.zip(Mono.just(solicitud), usuarioRepository.buscarPorDocumento(solicitud.getDocumentoIdentidadCliente())))
                 .flatMap(tuple -> {
                     Solicitud solicitud = tuple.getT1();
